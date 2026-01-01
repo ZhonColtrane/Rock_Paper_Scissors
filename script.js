@@ -4,7 +4,6 @@ let computerScore = 0;
 let humanChoice = "Rock"; //default choice as Rock
 let computerChoice = getComputerChoice();
 
-console.log(playGame());
 
 function getComputerChoice() {
     let random = Math.random();
@@ -17,11 +16,6 @@ function getComputerChoice() {
     }
 }
 
-function getHumanChoice() {
-    let humanChoice = prompt("Enter Rock, Paper, or Scissors:");
-    return humanChoice;
-}
-
 function capitalize(str){
     const firstChar = str[0];
     const restOfString = str.slice(1);
@@ -29,34 +23,57 @@ function capitalize(str){
 }
 
 function playRound(humanChoice, computerChoice) {
-    humanChoice = getHumanChoice();
+    let result = "";
     computerChoice = getComputerChoice();
     const hChoice = capitalize(humanChoice.toLowerCase()); // Normalize human choice
     
+    if (humanScore ===5 || computerScore ===5){
+        resetGame();
+    }
+
     if (hChoice === computerChoice) {
-        console.log("It's a tie!");
+        result = ("It's a tie!");
+        results.textContent = result;
     } else if ((hChoice === "Rock") && (computerChoice === "Scissors") ||    // Human wins
                (hChoice === "Paper") && (computerChoice === "Rock") ||
                (hChoice === "Scissors") && (computerChoice === "Paper")) {
         humanScore++;
-        console.log("You win! " + capitalize(hChoice) + " beats " + computerChoice + ".");
+        result = ("You win! " + capitalize(hChoice) + " beats " + computerChoice + ".");
+        results.textContent = result;
+        scoreBoard.textContent = ("Human score: " + humanScore + " Computer score: " + computerScore);
     } else {
         computerScore++;
-        console.log("You lose! " + computerChoice + " beats " + capitalize(hChoice) + ".");
-    }     
+        result = ("You lose! " + computerChoice + " beats " + capitalize(hChoice) + ".");
+        results.textContent = result;
+        scoreBoard.textContent = ("Human score: " + humanScore + " Computer score: " + computerScore);
+    }
+    checkGameEnd();     
 }
 
-function playGame() {
-    while ((humanScore + computerScore) < 5) {
-        playRound(humanChoice, computerChoice);
-        console.log("Human score: " + humanScore);
-        console.log("Computer score: " + computerScore);
+const rock = document.querySelector('#rock');
+const paper = document.querySelector('#paper');
+const scissors = document.querySelector('#scissors');
+
+rock.addEventListener('click',() => playRound("Rock",computerChoice));
+paper.addEventListener('click',() => playRound("Paper",computerChoice));
+scissors.addEventListener('click',() => playRound("Scissors",computerChoice));
+
+const results = document.querySelector('#results');
+const scoreBoard = document.querySelector('#scoreboard');
+const finalResult = document.querySelector('#finalresult');
+
+function checkGameEnd() {
+    if (humanScore ===5){
+    finalResult.textContent = "Congratulations! You won the game!";
+    } else if (computerScore ===5){
+    finalResult.textContent = "Computer won the game! Try again!";
     }
-    if ((humanScore+computerScore) === 5) {
-        if (humanScore > computerScore) {
-            return "Congratulations! You beat the computer " + humanScore + " to " + computerScore + ".";
-        } else {
-            return "Sorry, the computer beat you " + computerScore + " to " + humanScore + ". Better luck next time!";
-        }
-    }
+}
+
+function resetGame() {
+    //Initialize result if new game
+    humanScore = 0;
+    computerScore = 0;
+    scoreBoard.textContent = ("Human score: " + humanScore + " Computer score: " + computerScore);
+    finalResult.textContent = "";
 }
